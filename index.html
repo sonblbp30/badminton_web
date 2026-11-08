@@ -3,7 +3,7 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#10251f">
 <title>Badminton Money Manager</title>
 <style>
@@ -21,19 +21,23 @@
 * {box-sizing:border-box}
 body {
   margin:0;background:var(--bg);color:var(--ink);
-  font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif
+  font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif
 }
 header {
-  background:#10251f;color:white;padding:24px 16px 28px
+  background:#10251f;color:white;padding:24px max(16px, env(safe-area-inset-left)) 28px
 }
 header .wrap,main {max-width:900px;margin:auto}
-header h1 {margin:0;font-size:24px}
+header h1 {margin:0;font-size:clamp(19px, 5vw, 24px)}
 header p {margin:5px 0 0;color:#c6d8ce}
-main {padding:18px 14px 50px}
-.tabs {display:flex;gap:8px;margin-bottom:16px;overflow:auto}
+main {width:100%;padding:18px max(14px, env(safe-area-inset-left)) 50px}
+.tabs {
+  display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;
+  -webkit-overflow-scrolling:touch;scrollbar-width:thin
+}
 .tab {
   border:1px solid var(--line);background:white;border-radius:999px;
-  padding:9px 16px;font-weight:650;white-space:nowrap;color:var(--muted)
+  padding:9px 16px;font-weight:650;white-space:nowrap;color:var(--muted);
+  flex:0 0 auto
 }
 .tab.active {background:var(--green);border-color:var(--green);color:white}
 .panel {display:none}
@@ -49,13 +53,17 @@ h2 {font-size:17px;margin:0 0 14px}
 label {font-size:13px;font-weight:650;color:#425149}
 input,select {
   width:100%;border:1px solid #d7e1da;border-radius:11px;
-  padding:12px;background:white;color:var(--ink);font:inherit;min-width:0
+  padding:12px;background:white;color:var(--ink);font:inherit;
+  font-size:16px;min-width:0;min-height:48px
 }
 input:focus,select:focus {outline:2px solid #a5d8bf;border-color:var(--green)}
 .hint {font-size:12px;color:var(--muted);margin-top:3px}
 .seg {display:flex;gap:8px}
 .seg label {flex:1}
-.seg input {position:absolute;opacity:0;pointer-events:none}
+.seg input {
+  position:absolute;opacity:0;pointer-events:none;
+  width:1px;height:1px;min-height:0;padding:0
+}
 .seg span {
   display:block;text-align:center;border:1px solid var(--line);
   border-radius:11px;padding:10px 6px;color:var(--muted)
@@ -66,13 +74,18 @@ input:focus,select:focus {outline:2px solid #a5d8bf;border-color:var(--green)}
 }
 .summary {background:#10251f;color:white;border-radius:17px;padding:18px}
 .summary .muted {color:#b8ccc1}
-.moneyline {display:flex;justify-content:space-between;gap:12px;margin:7px 0}
+.moneyline {
+  display:flex;justify-content:space-between;align-items:flex-start;
+  gap:12px;margin:7px 0
+}
+.moneyline strong {text-align:right;overflow-wrap:anywhere}
 .per {font-size:13px;color:#c7d9cf}
 .per strong {display:block;font-size:26px;color:#fff}
 .actions {display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
 button {
   border:0;border-radius:11px;padding:11px 15px;font:inherit;
-  font-weight:700;background:var(--green);color:white;cursor:pointer
+  font-weight:700;background:var(--green);color:white;cursor:pointer;
+  min-height:44px
 }
 button.secondary {background:#edf3ef;color:#264438}
 button.danger {background:#fff0f0;color:var(--red)}
@@ -84,12 +97,31 @@ button.danger {background:#fff0f0;color:var(--red)}
 .history-head strong {display:block}
 .history-actions {display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
 .history-actions button {padding:7px 10px;font-size:12px}
+.court-row {
+  border:1px solid var(--line);border-radius:13px;padding:13px;
+  margin-top:10px
+}
+.court-row h3 {font-size:15px;margin:0 0 10px}
+.court-hours-wrap[hidden] {display:none}
 .empty {text-align:center;padding:28px;color:var(--muted)}
 .notice {font-size:12px;color:var(--muted);margin-top:12px}
-@media(max-width:560px) {
-  header h1 {font-size:21px}
+@media(max-width:600px) {
+  header {padding-right:max(16px, env(safe-area-inset-right))}
+  main {padding-right:max(14px, env(safe-area-inset-right))}
+  .grid {grid-template-columns:minmax(0,1fr);gap:12px}
+  .field.full {grid-column:auto}
   .card {padding:15px}
-  .grid {gap:10px}
+  .actions > button {flex:1 1 100%}
+  .history-actions button {flex:1 1 90px}
+}
+@media(max-width:380px) {
+  header {padding-top:18px;padding-bottom:20px}
+  main {padding:14px max(10px, env(safe-area-inset-left)) 36px}
+  .card {padding:12px;border-radius:14px}
+  .summary {padding:14px}
+  .moneyline {flex-direction:column;gap:0}
+  .moneyline strong {text-align:left}
+  .history-head {flex-direction:column;gap:4px}
 }
 </style>
 </head>
@@ -97,8 +129,7 @@ button.danger {background:#fff0f0;color:var(--red)}
 
 <header>
   <div class="wrap">
-    <h1>🏸 Badminton Money Manager</h1>
-    <p>Tính tiền sân, tiền cầu và chia chi phí cho cả nhóm</p>
+    <h1>️🏸 Badminton Money Manager</h1>
   </div>
 </header>
 
@@ -126,10 +157,6 @@ button.danger {background:#fff0f0;color:var(--red)}
         <input id="members" type="number" min="1" step="1" value="4">
       </div>
       <div class="field">
-        <label for="hours">Tổng số giờ thuê sân</label>
-        <input id="hours" type="number" min="0" step="0.5" value="2">
-      </div>
-      <div class="field">
         <label for="shuttleCount">Tổng số quả cầu đã đánh</label>
         <input id="shuttleCount" type="number" min="0" step="1" value="12">
       </div>
@@ -145,17 +172,24 @@ button.danger {background:#fff0f0;color:var(--red)}
   </div>
 
   <div class="card">
-    <h2>Cách tính tiền sân</h2>
-    <div class="seg">
-      <label>
-        <input type="radio" name="mode" value="hour">
-        <span>Theo giờ</span>
-      </label>
-      <label>
-        <input type="radio" name="mode" value="combo" checked>
-        <span>Combo 2 tiếng</span>
-      </label>
+    <h2>Thông tin sân</h2>
+    <div class="field">
+      <label for="courtCount">Số lượng sân</label>
+      <select id="courtCount">
+        <option value="1">1 sân</option>
+        <option value="2" selected>2 sân</option>
+        <option value="3">3 sân</option>
+        <option value="4">4 sân</option>
+        <option value="5">5 sân</option>
+        <option value="6">6 sân</option>
+        <option value="7">7 sân</option>
+        <option value="8">8 sân</option>
+        <option value="9">9 sân</option>
+        <option value="10">10 sân</option>
+      </select>
     </div>
+    <p class="hint">Chọn cách tính riêng cho từng sân. Combo tính trọn gói; sân theo giờ tự áp dụng combo 2 tiếng và tính giờ dư theo giá/giờ.</p>
+    <div id="courtsList"></div>
     <div class="grid" style="margin-top:13px">
       <div class="field" id="hourPriceWrap">
         <label for="hourPrice">Giá sân 1 giờ (VNĐ)</label>
@@ -166,9 +200,6 @@ button.danger {background:#fff0f0;color:var(--red)}
         <input id="comboPrice" type="number" min="0" step="1000" value="150000">
       </div>
     </div>
-    <p class="hint" id="formulaHint">
-      Ví dụ 5 giờ = 2 combo × giá combo + 1 giờ × giá sân/giờ.
-    </p>
   </div>
 
   <div class="summary" aria-live="polite">
@@ -186,7 +217,7 @@ button.danger {background:#fff0f0;color:var(--red)}
     </div>
     <hr style="border:0;border-top:1px solid #ffffff30;margin:14px 0">
     <div class="per">
-      Mỗi thành viên cần trả (làm tròn lên 1.000 VNĐ)
+      Mỗi thành viên cần trả
       <strong id="perPerson">125.000 ₫</strong>
     </div>
     <div class="small" style="color:#c7d9cf;margin-top:7px" id="exactPer"></div>
@@ -194,9 +225,6 @@ button.danger {background:#fff0f0;color:var(--red)}
       <button id="saveBtn">Lưu buổi đánh</button>
       <button class="secondary" id="copyBtn">Sao chép gửi Zalo</button>
       <button class="secondary" id="resetBtn">Làm mới</button>
-    </div>
-    <div class="notice" style="color:#c7d9cf">
-      Tiền mỗi người được làm tròn lên 1.000 VNĐ để dễ thu.
     </div>
   </div>
 </section>
@@ -224,14 +252,14 @@ button.danger {background:#fff0f0;color:var(--red)}
         <input id="setTube" type="number" min="0" step="1000">
       </div>
       <div class="field">
+        <label for="setLoose">Giá 1 quả cầu lẻ (VNĐ)</label>
+        <input id="setLoose" type="number" min="0" step="1000">
+      </div>
+      <div class="field">
         <label for="setHour">Giá sân 1 giờ (VNĐ)</label>
         <input id="setHour" type="number" min="0" step="1000">
       </div>
       <div class="field">
-        <label for="setLoose">Giá 1 quả cầu lẻ (VNĐ)</label>
-        <input id="setLoose" type="number" min="0" step="1000">
-      </div>
-      <div class="field full">
         <label for="setCombo">Giá combo 2 tiếng (VNĐ)</label>
         <input id="setCombo" type="number" min="0" step="1000">
       </div>
@@ -248,8 +276,6 @@ button.danger {background:#fff0f0;color:var(--red)}
 const $ = id => document.getElementById(id);
 const money = n => Math.round(n).toLocaleString('vi-VN') + ' ₫';
 const val = id => Math.max(0, Number($(id).value) || 0);
-const getMode = () =>
-  document.querySelector('input[name="mode"]:checked').value;
 
 const defaults = {
   tube: 350000,
@@ -267,9 +293,48 @@ let history = JSON.parse(
   localStorage.getItem('badmintonHistory') || '[]'
 );
 
+function getCourts() {
+  return Array.from(document.querySelectorAll('.court-row')).map((row, i) => {
+    const mode = row.querySelector('.court-mode').value;
+    return {
+      number: i + 1,
+      mode,
+      hours: mode === 'hour' ? Number(row.querySelector('.court-hours').value) : 0
+    };
+  });
+}
+
+function renderCourts(courts = []) {
+  const count = Number($('courtCount').value);
+  $('courtsList').innerHTML = Array.from({length: count}, (_, i) => {
+    const court = courts[i] || {mode: 'combo2', hours: 2};
+    return `
+      <div class="court-row" data-court="${i}">
+        <h3>Sân ${i + 1}</h3>
+        <div class="field">
+          <label for="courtMode${i}">Cách tính tiền</label>
+          <select class="court-mode" id="courtMode${i}">
+            <option value="combo2"${court.mode === 'combo2' ? ' selected' : ''}>Combo 2 tiếng</option>
+            <option value="hour"${court.mode === 'hour' ? ' selected' : ''}>Theo giờ</option>
+          </select>
+        </div>
+        <div class="field court-hours-wrap"${court.mode === 'hour' ? '' : ' hidden'}>
+          <label for="courtHours${i}">Số giờ thuê sân</label>
+          <select class="court-hours" id="courtHours${i}">
+            ${Array.from({length: 10}, (_, hour) => {
+              const value = hour + 1;
+              return `<option value="${value}"${Number(court.hours || 2) === value ? ' selected' : ''}>${value} giờ</option>`;
+            }).join('')}
+          </select>
+        </div>
+        <p class="small court-cost" aria-live="polite"></p>
+      </div>
+    `;
+  }).join('');
+}
+
 function calc() {
   const members = Math.floor(val('members'));
-  const hours = val('hours');
   const shuttleCount = Math.floor(val('shuttleCount'));
 
   // Mỗi 12 quả được tính thành một ống.
@@ -280,15 +345,21 @@ function calc() {
   const shuttleLooseCost = looseCount * val('loosePrice');
   const shuttle = shuttleTubeCost + shuttleLooseCost;
 
-  const mode = getMode();
-
-  // Tính tiền sân.
-  const court = mode === 'hour'
-    ? hours * val('hourPrice')
-    : (
-        Math.floor(hours / 2) * val('comboPrice') +
-        (hours % 2) * val('hourPrice')
-      );
+  const courts = getCourts();
+  const courtDetails = courts.map(court => {
+    const hours = court.hours;
+    const cost = court.mode === 'combo2'
+      ? val('comboPrice')
+      : Math.floor(hours / 2) * val('comboPrice') +
+        (hours % 2) * val('hourPrice');
+    return {...court, hours: court.mode === 'hour' ? hours : 2, cost};
+  });
+  const hours = courtDetails.reduce((sum, court) => sum + court.hours, 0);
+  const court = courtDetails.reduce((sum, item) => sum + item.cost, 0);
+  courtDetails.forEach((item, i) => {
+    const row = $('courtsList').querySelector(`[data-court="${i}"]`);
+    row.querySelector('.court-cost').textContent = `Tiền sân: ${money(item.cost)}`;
+  });
 
   const total = shuttle + court;
   const exact = members ? total / members : 0;
@@ -306,21 +377,10 @@ function calc() {
     ? money(rounded)
     : 'Nhập số thành viên';
 
-  $('exactPer').textContent = members
-    ? `Chưa làm tròn: ${money(exact)}/người · Tổng thu nếu thu mức làm tròn: ${money(rounded * members)}`
-    : 'Vui lòng nhập số thành viên lớn hơn 0.';
-
-  $('comboPriceWrap').style.display =
-    mode === 'combo' ? 'flex' : 'none';
-
-  $('formulaHint').textContent = mode === 'combo'
-    ? 'Ví dụ 5 giờ = 2 combo × giá combo + 1 giờ × giá sân/giờ.'
-    : 'Tiền sân = tổng số giờ × giá sân 1 giờ.';
-
   return {
-    members, hours, shuttleCount, fullTubes, looseCount,
+    members, hours, shuttleCount, fullTubes, looseCount, courts: courtDetails,
     shuttle, shuttleTubeCost, shuttleLooseCost,
-    court, total, exact, rounded, mode
+    court, total, exact, rounded
   };
 }
 
@@ -339,21 +399,30 @@ function snapshot() {
 }
 
 function message(s) {
-  const mode = s.mode === 'combo'
-    ? 'Combo 2 tiếng'
-    : 'Theo giờ';
+  const courts = s.courts || [{
+    number: 1,
+    mode: 'hour',
+    hours: s.hours || 2,
+    cost: s.court
+  }];
+  const courtSummary = courts.map(court => {
+    const mode = court.mode === 'combo2'
+      ? 'Combo 2 tiếng'
+      : `Theo giờ (${court.hours} tiếng)`;
+    return `Sân ${court.number}: ${mode} — ${money(court.cost)}`;
+  }).join('\n');
 
   return `🏸 TỔNG KẾT TIỀN CẦU LÔNG
 ${s.name || 'Buổi đánh cầu lông'}
 ${s.date ? 'Ngày: ' + s.date : ''}
 
 Số thành viên: ${s.members}
-Thời gian thuê: ${s.hours} giờ
+Số sân: ${courts.length} · Tổng thời lượng sân: ${s.hours} giờ
+${courtSummary}
 Số quả cầu đã đánh: ${s.shuttleCount}
 Quy đổi: ${s.fullTubes} ống × 12 quả + ${s.looseCount} quả lẻ
 Tiền cầu nguyên ống: ${money(s.shuttleTubeCost)}
 Tiền cầu lẻ: ${money(s.shuttleLooseCost)}
-Cách tính sân: ${mode}
 
 Tiền cầu: ${money(s.shuttle)}
 Tiền sân: ${money(s.court)}
@@ -380,7 +449,7 @@ function renderHistory() {
           <strong>${escapeHtml(s.name || 'Buổi đánh cầu lông')}</strong>
           <span class="small">
             ${escapeHtml(s.date || 'Không có ngày')} ·
-            ${s.members} thành viên · ${s.hours} giờ
+            ${s.members} thành viên · ${s.courts?.length || 1} sân · ${s.hours} giờ sân
           </span>
         </div>
         <strong>${money(s.total)}</strong>
@@ -424,17 +493,18 @@ window.loadHistory = i => {
   $('date').value = s.date || '';
   $('name').value = s.name || '';
   $('members').value = s.members;
-  $('hours').value = s.hours;
   $('shuttleCount').value =
     s.shuttleCount ?? ((s.tubes || 0) * 12);
   $('tubePrice').value = s.tubePrice;
   $('loosePrice').value = s.loosePrice ?? 0;
   $('hourPrice').value = s.hourPrice;
   $('comboPrice').value = s.comboPrice;
-
-  document.querySelector(
-    `input[name="mode"][value="${s.mode}"]`
-  ).checked = true;
+  const courts = s.courts || [{
+    mode: 'hour',
+    hours: s.hours || 2
+  }];
+  $('courtCount').value = courts.length;
+  renderCourts(courts);
 
   calc();
   document.querySelector('[data-tab="calculator"]').click();
@@ -480,15 +550,26 @@ document.querySelectorAll('.tab').forEach(b => {
 document.querySelectorAll('input').forEach(el => {
   el.addEventListener('input', () => {
     if ([
-      'members', 'hours', 'shuttleCount',
+      'members', 'shuttleCount',
       'tubePrice', 'loosePrice',
       'hourPrice', 'comboPrice'
     ].includes(el.id)) calc();
   });
 });
 
-document.querySelectorAll('input[name="mode"]')
-  .forEach(el => el.addEventListener('change', calc));
+$('courtCount').addEventListener('change', () => {
+  const courts = getCourts();
+  renderCourts(courts);
+  calc();
+});
+
+$('courtsList').addEventListener('change', event => {
+  if (event.target.matches('.court-mode')) {
+    event.target.closest('.court-row').querySelector('.court-hours-wrap').hidden =
+      event.target.value !== 'hour';
+  }
+  calc();
+});
 
 // Lưu buổi đánh.
 $('saveBtn').onclick = () => {
@@ -524,9 +605,10 @@ $('copyBtn').onclick = () => {
 $('resetBtn').onclick = () => {
   $('name').value = '';
   $('members').value = 4;
-  $('hours').value = 2;
   $('shuttleCount').value = 12;
   $('date').value = new Date().toISOString().slice(0, 10);
+  $('courtCount').value = 2;
+  renderCourts();
   calc();
 };
 
@@ -574,6 +656,7 @@ $('setCombo').value = settings.combo;
 
 $('date').value = new Date().toISOString().slice(0, 10);
 
+renderCourts();
 calc();
 renderHistory();
 </script>
