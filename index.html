@@ -56,7 +56,10 @@ input,select {
   padding:12px;background:white;color:var(--ink);font:inherit;
   font-size:16px;min-width:0;min-height:48px
 }
-input[type="date"] {display:block;width:100%;min-width:0;max-width:100%}
+input[type="date"] {
+  display:block;width:100%;min-width:0;max-width:100%;
+  -webkit-appearance:none;appearance:none
+}
 input:focus,select:focus {outline:2px solid #a5d8bf;border-color:var(--green)}
 .hint {font-size:12px;color:var(--muted);margin-top:3px}
 .seg {display:flex;gap:8px}
