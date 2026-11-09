@@ -48,6 +48,10 @@ main {width:100%;padding:18px max(14px, env(safe-area-inset-left)) 50px}
 }
 h2 {font-size:17px;margin:0 0 14px}
 .grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.price-fields {
+  grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;min-width:0
+}
 .field {display:flex;flex-direction:column;gap:5px;min-width:0}
 .field.full {grid-column:1/-1}
 label {font-size:13px;font-weight:650;color:#425149}
@@ -84,7 +88,7 @@ input:focus,select:focus {outline:2px solid #a5d8bf;border-color:var(--green)}
 }
 .moneyline strong {text-align:right;overflow-wrap:anywhere}
 .per {font-size:13px;color:#c7d9cf}
-.per strong {display:block;font-size:26px;color:#fff}
+.member-charge-lines {margin-top:7px;white-space:pre-line;font-size:15px;color:#fff}
 .actions {display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
 button {
   border:0;border-radius:11px;padding:11px 15px;font:inherit;
@@ -106,13 +110,14 @@ button.danger {background:#fff0f0;color:var(--red)}
   margin-top:10px
 }
 .court-row h3 {font-size:15px;margin:0 0 10px}
-.court-hours-wrap[hidden] {display:none}
+.court-hours-wrap[hidden],#fixedMenPriceField[hidden] {display:none}
 .empty {text-align:center;padding:28px;color:var(--muted)}
 .notice {font-size:12px;color:var(--muted);margin-top:12px}
 @media(max-width:600px) {
   header {padding-right:max(16px, env(safe-area-inset-right))}
   main {padding-right:max(14px, env(safe-area-inset-right))}
   .grid {grid-template-columns:minmax(0,1fr);gap:12px}
+  .price-fields {grid-template-columns:minmax(0,1fr);gap:12px}
   .field.full {grid-column:auto}
   .card {padding:15px}
   .actions > button {flex:1 1 100%}
@@ -148,6 +153,10 @@ button.danger {background:#fff0f0;color:var(--red)}
   <div class="card">
     <h2>Thông tin buổi đánh</h2>
     <div class="grid">
+      <div class="field full">
+        <label for="venueSelect">Sân / địa điểm</label>
+        <select id="venueSelect"></select>
+      </div>
       <div class="field">
         <label for="date">Ngày đánh</label>
         <input id="date" type="date">
@@ -157,22 +166,62 @@ button.danger {background:#fff0f0;color:var(--red)}
         <input id="name" placeholder="Ví dụ: Cầu lông tối thứ 3">
       </div>
       <div class="field">
-        <label for="members">Số thành viên</label>
+        <label for="members">Tổng số thành viên tham gia</label>
         <input id="members" type="number" min="1" step="1" value="4">
+        <span class="hint">Bao gồm thành viên cố định và vãng lai.</span>
       </div>
       <div class="field">
         <label for="shuttleCount">Tổng số quả cầu đã đánh</label>
         <input id="shuttleCount" type="number" min="0" step="1" value="12">
       </div>
-      <div class="field">
-        <label for="tubePrice">Giá 1 ống (12 quả) (VNĐ)</label>
-        <input id="tubePrice" type="number" min="0" step="1000" value="350000">
-      </div>
-      <div class="field full">
-        <label for="loosePrice">Giá 1 quả cầu lẻ (VNĐ)</label>
-        <input id="loosePrice" type="number" min="0" step="1000" value="30000">
+      <div class="price-fields">
+        <div class="field">
+          <label for="tubePrice">Giá 1 ống (12 quả) (VNĐ)</label>
+          <input id="tubePrice" type="number" min="0" step="1000" value="350000">
+        </div>
+        <div class="field">
+          <label for="loosePrice">Giá 1 quả cầu lẻ (VNĐ)</label>
+          <input id="loosePrice" type="number" min="0" step="1000" value="30000">
+        </div>
       </div>
     </div>
+  </div>
+
+  <div class="card">
+    <h2>Thành viên cố định và vãng lai</h2>
+    <div class="grid">
+      <div class="field" id="fixedMenPriceField" hidden>
+        <label for="fixedMenPrice">Giá buổi chơi mỗi nam cố định (VNĐ)</label>
+        <input id="fixedMenPrice" type="number" min="0" step="1000" value="0">
+      </div>
+      <div class="field">
+        <label for="fixedWomenCount">Số nữ cố định</label>
+        <input id="fixedWomenCount" type="number" min="0" step="1" value="0">
+      </div>
+      <div class="field">
+        <label for="fixedWomenPrice">Giá buổi chơi mỗi nữ cố định (VNĐ)</label>
+        <input id="fixedWomenPrice" type="number" min="0" step="1000" value="0">
+      </div>
+      <div class="field">
+        <label for="guestMenCount">Số nam vãng lai</label>
+        <input id="guestMenCount" type="number" min="0" step="1" value="0">
+      </div>
+      <div class="field">
+        <label for="guestMenPrice">Giá buổi chơi mỗi nam vãng lai (VNĐ)</label>
+        <input id="guestMenPrice" type="number" min="0" step="1000" value="0">
+      </div>
+      <div class="field">
+        <label for="guestWomenCount">Số nữ vãng lai</label>
+        <input id="guestWomenCount" type="number" min="0" step="1" value="0">
+      </div>
+      <div class="field">
+        <label for="guestWomenPrice">Giá buổi chơi mỗi nữ vãng lai (VNĐ)</label>
+        <input id="guestWomenPrice" type="number" min="0" step="1000" value="0">
+      </div>
+    </div>
+    <p class="hint" id="fixedMenCount">Số nam cố định được tính từ tổng số thành viên.</p>
+    <p class="hint" id="fixedMenPriceHint">Tiền nam cố định tự chia phần chi phí còn lại sau khi trừ tiền các nhóm khác. Nếu phần thu từ nhóm khác đã vượt tổng chi phí, nhóm trưởng có thể tự nhập mức thu cho nam cố định.</p>
+    <p class="hint" id="fixedMenAutoPrice"></p>
   </div>
 
   <div class="card">
@@ -221,9 +270,11 @@ button.danger {background:#fff0f0;color:var(--red)}
     </div>
     <hr style="border:0;border-top:1px solid #ffffff30;margin:14px 0">
     <div class="per">
-      Mỗi thành viên cần trả
-      <strong id="perPerson">125.000 ₫</strong>
+        Mức thu theo nhóm thành viên
+        <div class="member-charge-lines" id="memberCharges"></div>
     </div>
+    <div class="small" style="color:#c7d9cf;margin-top:7px" id="memberChargeTotal"></div>
+    <div class="notice" style="color:#ffd2d2" id="memberError" hidden></div>
     <div class="small" style="color:#c7d9cf;margin-top:7px" id="exactPer"></div>
     <div class="actions">
       <button id="saveBtn">Lưu buổi đánh</button>
@@ -246,7 +297,7 @@ button.danger {background:#fff0f0;color:var(--red)}
 
 <section id="settings" class="panel">
   <div class="card">
-    <h2>Giá mặc định</h2>
+    <h2>Giá cầu và giá mặc định</h2>
     <p class="small">
       Các mức giá này được dùng làm giá mặc định cho những lần mở app tiếp theo.
     </p>
@@ -273,6 +324,31 @@ button.danger {background:#fff0f0;color:var(--red)}
     </div>
     <p class="notice" id="settingsMsg"></p>
   </div>
+  <div class="card">
+    <h2>Quản lý sân / địa điểm</h2>
+    <p class="small">Lưu tên sân cùng giá thuê theo giờ và combo 2 tiếng. Chọn địa điểm ở đầu biểu mẫu tính tiền.</p>
+    <input id="venueEditId" type="hidden">
+    <div class="grid">
+      <div class="field full">
+        <label for="venueName">Tên sân / địa điểm</label>
+        <input id="venueName" placeholder="Ví dụ: Sân cầu lông ABC">
+      </div>
+      <div class="field">
+        <label for="venueHourPrice">Giá sân 1 giờ (VNĐ)</label>
+        <input id="venueHourPrice" type="number" min="0" step="1000">
+      </div>
+      <div class="field">
+        <label for="venueComboPrice">Giá combo 2 tiếng (VNĐ)</label>
+        <input id="venueComboPrice" type="number" min="0" step="1000">
+      </div>
+    </div>
+    <div class="actions">
+      <button id="saveVenue">Thêm sân</button>
+      <button class="secondary" id="cancelVenueEdit" hidden>Hủy sửa</button>
+    </div>
+    <p class="notice" id="venueMsg" aria-live="polite"></p>
+    <div id="venueList"></div>
+  </div>
 </section>
 </main>
 
@@ -296,6 +372,63 @@ let settings = {
 let history = JSON.parse(
   localStorage.getItem('badmintonHistory') || '[]'
 );
+let venues = JSON.parse(
+  localStorage.getItem('badmintonVenues') || '[]'
+);
+
+function renderVenueOptions(selectedId = 'default', missingVenueName = 'Sân đã lưu trong lịch sử') {
+  const select = $('venueSelect');
+  select.innerHTML = `
+    <option value="default">Sân mặc định</option>
+    ${venues.map(venue =>
+      `<option value="${escapeHtml(venue.id)}">${escapeHtml(venue.name)}</option>`
+    ).join('')}
+  `;
+  if (selectedId !== 'default' && !venues.some(venue => venue.id === selectedId)) {
+    const option = document.createElement('option');
+    option.value = selectedId;
+    option.textContent = missingVenueName;
+    select.add(option);
+  }
+  select.value = selectedId;
+}
+
+function renderVenueList() {
+  $('venueList').innerHTML = venues.length
+    ? venues.map(venue => `
+      <div class="history-item">
+        <div class="history-head">
+          <strong>${escapeHtml(venue.name)}</strong>
+          <span class="small">${money(venue.hour)} / giờ · ${money(venue.combo)} / combo 2 tiếng</span>
+        </div>
+        <div class="history-actions">
+          <button class="secondary" data-venue-action="edit" data-venue-id="${escapeHtml(venue.id)}">Sửa</button>
+          <button class="danger" data-venue-action="delete" data-venue-id="${escapeHtml(venue.id)}">Xóa</button>
+        </div>
+      </div>
+    `).join('')
+    : '<div class="empty">Chưa lưu sân / địa điểm nào.</div>';
+}
+
+function persistVenues() {
+  localStorage.setItem('badmintonVenues', JSON.stringify(venues));
+  renderVenueList();
+}
+
+function getVenueName(id) {
+  return id === 'default'
+    ? 'Sân mặc định'
+    : venues.find(venue => venue.id === id)?.name ||
+      $('venueSelect').selectedOptions[0]?.textContent ||
+      'Sân đã lưu trong lịch sử';
+}
+
+function applyVenuePrices(id) {
+  const venue = venues.find(item => item.id === id);
+  $('hourPrice').value = venue ? venue.hour : settings.hour;
+  $('comboPrice').value = venue ? venue.combo : settings.combo;
+  calc();
+}
 
 function getCourts() {
   return Array.from(document.querySelectorAll('.court-row')).map((row, i) => {
@@ -339,6 +472,14 @@ function renderCourts(courts = []) {
 
 function calc() {
   const members = Math.floor(val('members'));
+  const fixedMenInputPrice = val('fixedMenPrice');
+  const fixedWomenCount = Math.floor(val('fixedWomenCount'));
+  const fixedWomenPrice = val('fixedWomenPrice');
+  const guestMenCount = Math.floor(val('guestMenCount'));
+  const guestMenPrice = val('guestMenPrice');
+  const guestWomenCount = Math.floor(val('guestWomenCount'));
+  const guestWomenPrice = val('guestWomenPrice');
+  const fixedMenCount = members - fixedWomenCount - guestMenCount - guestWomenCount;
   const shuttleCount = Math.floor(val('shuttleCount'));
 
   // Mỗi 12 quả được tính thành một ống.
@@ -366,10 +507,55 @@ function calc() {
   });
 
   const total = shuttle + court;
-  const exact = members ? total / members : 0;
-  const rounded = members
-    ? Math.ceil(exact / 1000) * 1000
+  const guestCharges =
+    guestMenCount * guestMenPrice +
+    guestWomenCount * guestWomenPrice;
+  const fixedWomenCharges = fixedWomenCount * fixedWomenPrice;
+  const otherMemberCharges = fixedWomenCharges + guestCharges;
+  const fixedMenNeedsManualPrice =
+    fixedMenCount > 0 && otherMemberCharges > total;
+  const fixedMenPrice = fixedMenCount > 0
+    ? fixedMenNeedsManualPrice
+      ? fixedMenInputPrice
+      : Math.ceil(Math.max(0, total - otherMemberCharges) / fixedMenCount / 1000) * 1000
     : 0;
+  const allFixedWomenPool = total - guestCharges;
+  const fixedWomenSplit = fixedMenCount === 0 && fixedWomenCount > 0;
+  const shareCount = fixedWomenSplit ? fixedWomenCount : 0;
+  const sharePool = Math.max(0, allFixedWomenPool);
+  const shareBeforeRounding = shareCount > 0 ? sharePool / shareCount : 0;
+  const sharedAmount = shareCount > 0
+    ? Math.ceil(shareBeforeRounding / 1000) * 1000
+    : 0;
+  let memberError = '';
+
+  if (members < 1) {
+    memberError = 'Vui lòng nhập tổng số thành viên tham gia lớn hơn 0.';
+  } else if (fixedMenCount < 0) {
+    memberError = 'Tổng số nữ cố định và thành viên vãng lai không được vượt quá tổng số thành viên.';
+  }
+
+  const memberBreakdown = {
+    fixedMen: {count: fixedMenCount, perPerson: fixedMenPrice},
+    fixedWomen: {
+      count: fixedWomenCount,
+      perPerson: fixedWomenSplit ? sharedAmount : fixedWomenPrice,
+      shared: fixedWomenSplit
+    },
+    guestMen: {count: guestMenCount, perPerson: guestMenPrice},
+    guestWomen: {count: guestWomenCount, perPerson: guestWomenPrice}
+  };
+  const memberChargeLines = [
+    fixedMenCount > 0 && `Nam cố định (${fixedMenCount}): ${money(fixedMenPrice)}/người`,
+    fixedWomenCount > 0 && `Nữ cố định (${fixedWomenCount}): ${money(memberBreakdown.fixedWomen.perPerson)}/người${fixedWomenSplit ? ' (chia phần còn lại)' : ''}`,
+    guestMenCount > 0 && `Nam vãng lai (${guestMenCount}): ${money(guestMenPrice)}/người`,
+    guestWomenCount > 0 && `Nữ vãng lai (${guestWomenCount}): ${money(guestWomenPrice)}/người`
+  ].filter(Boolean);
+  const totalCharged =
+    memberBreakdown.fixedMen.count * memberBreakdown.fixedMen.perPerson +
+    memberBreakdown.fixedWomen.count * memberBreakdown.fixedWomen.perPerson +
+    memberBreakdown.guestMen.count * memberBreakdown.guestMen.perPerson +
+    memberBreakdown.guestWomen.count * memberBreakdown.guestWomen.perPerson;
 
   $('shuttleTotal').textContent =
     money(shuttle) + ` (${fullTubes} ống + ${looseCount} quả lẻ)`;
@@ -377,14 +563,33 @@ function calc() {
   $('courtTotal').textContent = money(court);
   $('grandTotal').textContent = money(total);
 
-  $('perPerson').textContent = members
-    ? money(rounded)
-    : 'Nhập số thành viên';
+  $('fixedMenCount').textContent = fixedMenCount >= 0
+    ? `Số nam cố định: ${fixedMenCount}`
+    : 'Số nữ cố định và thành viên vãng lai đang vượt tổng số thành viên.';
+  $('fixedMenPriceField').hidden = !fixedMenNeedsManualPrice;
+  $('fixedMenAutoPrice').textContent =
+    fixedMenCount > 0 && !fixedMenNeedsManualPrice
+      ? `Mức thu tự tính cho mỗi nam cố định: ${money(fixedMenPrice)}.`
+      : fixedMenNeedsManualPrice
+        ? 'Khoản thu từ các nhóm khác đã cao hơn tổng chi phí. Nhóm trưởng tự quyết định mức thu cho nam cố định.'
+        : '';
+  $('memberCharges').textContent = memberError
+    ? 'Chưa thể tính mức thu.'
+    : memberChargeLines.join('\n');
+  $('memberChargeTotal').textContent = memberError
+    ? ''
+    : `Tổng thu từ thành viên: ${money(totalCharged)}.`;
+  $('memberError').textContent = memberError;
+  $('memberError').hidden = !memberError;
 
   return {
-    members, hours, shuttleCount, fullTubes, looseCount, courts: courtDetails,
+    members, fixedMenCount, fixedMenPrice, fixedWomenCount, fixedWomenPrice,
+    guestMenCount, guestMenPrice, guestWomenCount, guestWomenPrice,
+    memberBreakdown, memberError, memberValid: !memberError,
+    memberChargeLines, totalCharged,
+    hours, shuttleCount, fullTubes, looseCount, courts: courtDetails,
     shuttle, shuttleTubeCost, shuttleLooseCost,
-    court, total, exact, rounded
+    court, total, exact: shareBeforeRounding, rounded: sharedAmount
   };
 }
 
@@ -394,6 +599,8 @@ function snapshot() {
     ...c,
     date: $('date').value,
     name: $('name').value.trim(),
+    venueId: $('venueSelect').value,
+    venueName: getVenueName($('venueSelect').value),
     tubePrice: val('tubePrice'),
     loosePrice: val('loosePrice'),
     hourPrice: val('hourPrice'),
@@ -415,10 +622,14 @@ function message(s) {
       : `Theo giờ (${court.hours} tiếng)`;
     return `Sân ${court.number}: ${mode} — ${money(court.cost)}`;
   }).join('\n');
+  const memberSummary = s.memberBreakdown
+    ? `Mức thu theo nhóm:\n${s.memberChargeLines.join('\n')}\nTổng thu từ thành viên: ${money(s.totalCharged)}\nTổng thu có thể bao gồm các khoản khác như nước, đồ ăn.`
+    : `Mỗi người trả: ${money(s.rounded)}\nMức chia chính xác: ${money(s.exact)}/người\nTổng thu theo mức làm tròn: ${money(s.rounded * s.members)}`;
 
   return `🏸 TỔNG KẾT TIỀN CẦU LÔNG
 ${s.name || 'Buổi đánh cầu lông'}
 ${s.date ? 'Ngày: ' + s.date : ''}
+Sân / địa điểm: ${s.venueName || 'Sân mặc định'}
 
 Số thành viên: ${s.members}
 Số sân: ${courts.length} · Tổng thời lượng sân: ${s.hours} giờ
@@ -432,9 +643,13 @@ Tiền cầu: ${money(s.shuttle)}
 Tiền sân: ${money(s.court)}
 TỔNG CHI PHÍ: ${money(s.total)}
 
-Mỗi người trả: ${money(s.rounded)}
-Mức chia chính xác: ${money(s.exact)}/người
-Tổng thu theo mức làm tròn: ${money(s.rounded * s.members)}`;
+${memberSummary}`;
+}
+
+function historyMemberSummary(s) {
+  return s.memberChargeLines?.length
+    ? escapeHtml(s.memberChargeLines.join(' · '))
+    : `Mỗi người ${money(s.rounded)}`;
 }
 
 function renderHistory() {
@@ -452,6 +667,7 @@ function renderHistory() {
         <div>
           <strong>${escapeHtml(s.name || 'Buổi đánh cầu lông')}</strong>
           <span class="small">
+            ${escapeHtml(s.venueName || 'Sân mặc định')} ·
             ${escapeHtml(s.date || 'Không có ngày')} ·
             ${s.members} thành viên · ${s.courts?.length || 1} sân · ${s.hours} giờ sân
           </span>
@@ -461,7 +677,7 @@ function renderHistory() {
       <div class="small">
         Tiền cầu ${money(s.shuttle)} ·
         Tiền sân ${money(s.court)} ·
-        Mỗi người ${money(s.rounded)}
+        ${historyMemberSummary(s)}
       </div>
       <div class="history-actions">
         <button class="secondary" onclick="copyHistory(${i})">Sao chép</button>
@@ -496,7 +712,16 @@ window.loadHistory = i => {
 
   $('date').value = s.date || '';
   $('name').value = s.name || '';
+  renderVenueOptions(s.venueId || 'default', s.venueName);
+  $('venueSelect').value = s.venueId || 'default';
   $('members').value = s.members;
+  $('fixedMenPrice').value = s.fixedMenPrice ?? s.memberBreakdown?.fixedMen?.perPerson ?? 0;
+  $('fixedWomenCount').value = s.fixedWomenCount ?? s.memberBreakdown?.fixedWomen?.count ?? 0;
+  $('fixedWomenPrice').value = s.fixedWomenPrice ?? 0;
+  $('guestMenCount').value = s.guestMenCount ?? s.memberBreakdown?.guestMen?.count ?? 0;
+  $('guestMenPrice').value = s.guestMenPrice ?? 0;
+  $('guestWomenCount').value = s.guestWomenCount ?? s.memberBreakdown?.guestWomen?.count ?? 0;
+  $('guestWomenPrice').value = s.guestWomenPrice ?? 0;
   $('shuttleCount').value =
     s.shuttleCount ?? ((s.tubes || 0) * 12);
   $('tubePrice').value = s.tubePrice;
@@ -555,6 +780,10 @@ document.querySelectorAll('input').forEach(el => {
   el.addEventListener('input', () => {
     if ([
       'members', 'shuttleCount',
+      'fixedMenPrice',
+      'fixedWomenCount', 'fixedWomenPrice',
+      'guestMenCount', 'guestMenPrice',
+      'guestWomenCount', 'guestWomenPrice',
       'tubePrice', 'loosePrice',
       'hourPrice', 'comboPrice'
     ].includes(el.id)) calc();
@@ -579,8 +808,8 @@ $('courtsList').addEventListener('change', event => {
 $('saveBtn').onclick = () => {
   const s = snapshot();
 
-  if (s.members < 1) {
-    alert('Vui lòng nhập số thành viên lớn hơn 0.');
+  if (!s.memberValid) {
+    alert(s.memberError);
     return;
   }
 
@@ -597,8 +826,8 @@ $('saveBtn').onclick = () => {
 $('copyBtn').onclick = () => {
   const s = snapshot();
 
-  if (s.members < 1) {
-    alert('Vui lòng nhập số thành viên lớn hơn 0.');
+  if (!s.memberValid) {
+    alert(s.memberError);
     return;
   }
 
@@ -609,6 +838,13 @@ $('copyBtn').onclick = () => {
 $('resetBtn').onclick = () => {
   $('name').value = '';
   $('members').value = 4;
+  $('fixedMenPrice').value = 0;
+  $('fixedWomenCount').value = 0;
+  $('fixedWomenPrice').value = 0;
+  $('guestMenCount').value = 0;
+  $('guestMenPrice').value = 0;
+  $('guestWomenCount').value = 0;
+  $('guestWomenPrice').value = 0;
   $('shuttleCount').value = 12;
   $('date').value = new Date().toISOString().slice(0, 10);
   $('courtCount').value = 2;
@@ -623,6 +859,89 @@ $('clearHistory').onclick = () => {
     persistHistory();
   }
 };
+
+function resetVenueForm() {
+  $('venueEditId').value = '';
+  $('venueName').value = '';
+  $('venueHourPrice').value = '';
+  $('venueComboPrice').value = '';
+  $('saveVenue').textContent = 'Thêm sân';
+  $('cancelVenueEdit').hidden = true;
+}
+
+$('saveVenue').onclick = () => {
+  const name = $('venueName').value.trim();
+  if (!name) {
+    $('venueMsg').textContent = 'Vui lòng nhập tên sân / địa điểm.';
+    return;
+  }
+
+  const editId = $('venueEditId').value;
+  const duplicate = venues.some(venue =>
+    venue.name.toLocaleLowerCase() === name.toLocaleLowerCase() &&
+    venue.id !== editId
+  );
+  if (duplicate) {
+    $('venueMsg').textContent = 'Tên sân / địa điểm này đã tồn tại.';
+    return;
+  }
+
+  const venue = {
+    id: editId || `venue-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    name,
+    hour: val('venueHourPrice'),
+    combo: val('venueComboPrice')
+  };
+  const existingIndex = venues.findIndex(item => item.id === editId);
+  if (existingIndex >= 0) venues[existingIndex] = venue;
+  else venues.push(venue);
+
+  persistVenues();
+  renderVenueOptions(venue.id);
+  applyVenuePrices(venue.id);
+  $('venueMsg').textContent = `Đã lưu giá cho ${venue.name}.`;
+  resetVenueForm();
+};
+
+$('cancelVenueEdit').onclick = resetVenueForm;
+
+$('venueList').addEventListener('click', event => {
+  const button = event.target.closest('[data-venue-action]');
+  if (!button) return;
+
+  const venue = venues.find(item => item.id === button.dataset.venueId);
+  if (!venue) return;
+
+  if (button.dataset.venueAction === 'edit') {
+    $('venueEditId').value = venue.id;
+    $('venueName').value = venue.name;
+    $('venueHourPrice').value = venue.hour;
+    $('venueComboPrice').value = venue.combo;
+    $('saveVenue').textContent = 'Lưu thay đổi';
+    $('cancelVenueEdit').hidden = false;
+    $('venueMsg').textContent = '';
+    $('venueName').focus();
+    return;
+  }
+
+  if (button.dataset.venueAction === 'delete' &&
+      confirm(`Xóa ${venue.name} khỏi danh sách sân?`)) {
+    venues = venues.filter(item => item.id !== venue.id);
+    persistVenues();
+    if ($('venueSelect').value === venue.id) {
+      renderVenueOptions('default');
+      applyVenuePrices('default');
+    } else {
+      renderVenueOptions($('venueSelect').value);
+    }
+    if ($('venueEditId').value === venue.id) resetVenueForm();
+    $('venueMsg').textContent = `Đã xóa ${venue.name}.`;
+  }
+});
+
+$('venueSelect').addEventListener('change', () => {
+  applyVenuePrices($('venueSelect').value);
+});
 
 // Lưu cài đặt giá mặc định.
 $('saveSettings').onclick = () => {
@@ -640,8 +959,10 @@ $('saveSettings').onclick = () => {
 
   $('tubePrice').value = settings.tube;
   $('loosePrice').value = settings.loose;
-  $('hourPrice').value = settings.hour;
-  $('comboPrice').value = settings.combo;
+  if ($('venueSelect').value === 'default') {
+    $('hourPrice').value = settings.hour;
+    $('comboPrice').value = settings.combo;
+  }
 
   $('settingsMsg').textContent = 'Đã lưu giá mặc định.';
   calc();
@@ -660,6 +981,8 @@ $('setCombo').value = settings.combo;
 
 $('date').value = new Date().toISOString().slice(0, 10);
 
+renderVenueOptions();
+renderVenueList();
 renderCourts();
 calc();
 renderHistory();
